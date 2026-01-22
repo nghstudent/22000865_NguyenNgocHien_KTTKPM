@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: rabbitmq:4-management-alpine
+    container_name: rabbitmq_app
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    restart: always
+
+  producer_service:
+    build: ./producer
+    container_name: producer_app
+    depends_on:
+      - rabbitmq
+    restart: on-failure
+
+  consumer_service:
+    build: ./consumer
+    container_name: consumer_app
+    depends_on:
+      - rabbitmq
+    restart: always
+
+volumes:
+  rabbitmq_data:
